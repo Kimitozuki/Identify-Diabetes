@@ -18,12 +18,14 @@ def modelling():
      df_temp = df.copy()
      df_class = df_temp.pop('Diabetes_binary')
      df_normalized = MinMaxScaler().fit_transform(df_temp)
+     range = MinMaxScaler().fit(df_temp).data_range_
+     min = MinMaxScaler().fit(df_temp).data_min_
      x_train,x_test,y_train,y_test = train_test_split(df_normalized,df_class,test_size=0.2,random_state=0)
      clf = AdaBoostClassifier(random_state=0, learning_rate=0.9500000000000002, n_estimators=85)
-     return clf.fit(x_train,y_train), list(df_temp.columns)
+     return clf.fit(x_train,y_train), list(df_temp.columns), min, range
 def predict(data):
-     model,col = modelling()
-     return model.predict(pd.DataFrame([data],columns=col))
+     model,col,min,range = modelling()
+     return model.predict(pd.DataFrame(([data]*min)/range,columns=col))
 
 #Apps
 st.title(':mag_right: Diabetes Check')
